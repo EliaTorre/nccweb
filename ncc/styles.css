@@ -154,6 +154,14 @@ a:hover {
     color: var(--fg);
     letter-spacing: -0.01em;
     line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    height: 2.5rem;
+    width: auto;
 }
 
 .logo:hover {
@@ -223,6 +231,7 @@ a:hover {
     font-size: 0.9375rem;
     color: var(--fg-soft);
     line-height: 1.8;
+    text-align: justify;
 }
 
 .animation-container {
@@ -242,6 +251,12 @@ a:hover {
 /* ============================================
    Page Content
    ============================================ */
+.back-link-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-md);
+}
+
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -256,7 +271,7 @@ a:hover {
     font-size: 0.8125rem;
     font-family: var(--font-body);
     color: var(--muted);
-    order: 1;
+    margin-left: auto;
 }
 
 .back-link::before {
@@ -269,10 +284,16 @@ a:hover {
 
 .page-title {
     font-size: var(--title-size);
+    margin-bottom: var(--space-lg);
 }
 
 .section {
     margin-bottom: var(--space-2xl);
+}
+
+.section-compact {
+    margin-top: calc(-1 * var(--space-md));
+    margin-bottom: calc(var(--space-2xl) - var(--space-md));
 }
 
 .section-title {
@@ -280,6 +301,39 @@ a:hover {
     font-size: var(--title-size);
     padding-bottom: var(--space-sm);
     margin-bottom: var(--space-md);
+}
+
+/* Research Areas Grid */
+.research-areas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+}
+
+.research-area-box {
+    padding: var(--space-lg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    text-align: center;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.research-area-box:hover {
+    border-color: var(--accent);
+    background-color: rgba(184, 106, 75, 0.05);
+}
+
+.research-area-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--fg);
+    margin: 0;
+    line-height: 1.4;
 }
 
 /* Team Lead Standalone */
@@ -293,6 +347,39 @@ a:hover {
     flex: 0 1 clamp(280px, 33%, 360px);
 }
 
+
+/* Two-Column Work Layout */
+.work-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-2xl);
+}
+
+.work-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.column-title {
+    font-size: var(--title-size);
+    margin-bottom: var(--space-lg);
+    color: var(--fg);
+}
+
+.column-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.no-openings-message {
+    text-align: left;
+    color: var(--fg-soft);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.8;
+    padding: var(--space-lg) 0;
+}
 
 /* Compact Opportunities Grid */
 .opportunities-grid {
@@ -461,6 +548,47 @@ a:hover {
     color: var(--icon-hover);
 }
 
+/* Apply Button */
+.apply-card {
+    text-align: center;
+    padding: var(--space-xl);
+}
+
+.apply-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+    padding: var(--space-md) var(--space-xl);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.apply-button:hover {
+    border-color: var(--accent);
+    background-color: rgba(184, 106, 75, 0.05);
+    color: var(--fg);
+}
+
+.apply-button-text {
+    letter-spacing: 0.02em;
+}
+
+.apply-button-arrow {
+    transition: transform 0.3s ease;
+    font-size: 1.1em;
+}
+
+.apply-button:hover .apply-button-arrow {
+    transform: translateX(4px);
+}
+
 /* ============================================
    Publications
    ============================================ */
@@ -496,6 +624,29 @@ a:hover {
     font-size: 0.875rem;
 }
 
+.publication-year {
+    font-size: 1.25rem;
+    color: var(--fg);
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--rule);
+}
+
+.publication-year:first-child {
+    margin-top: 0;
+}
+
+.loading-text {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.error-text {
+    color: #b86a4b;
+    font-style: italic;
+}
+
 /* ============================================
    Footer
    ============================================ */
@@ -511,6 +662,27 @@ a:hover {
     align-items: center;
     color: var(--muted);
     font-size: 0.75rem;
+}
+
+.footer-logos {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.footer-logo {
+    height: 2rem;
+    width: auto;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.footer-logo-eth {
+    height: 2.5rem;
+}
+
+.footer-logo:hover {
+    opacity: 1;
 }
 
 /* ============================================
@@ -536,6 +708,15 @@ a:hover {
 
     .team-grid {
         grid-template-columns: 1fr;
+    }
+
+    .work-columns {
+        grid-template-columns: 1fr;
+        gap: var(--space-xl);
+    }
+
+    .research-areas-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -568,5 +749,9 @@ a:hover {
         flex-direction: column;
         gap: var(--space-sm);
         text-align: center;
+    }
+
+    .research-areas-grid {
+        grid-template-columns: 1fr;
     }
 }

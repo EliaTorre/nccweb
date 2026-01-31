@@ -7,6 +7,7 @@
     <title>Research — Mante Lab</title>
     <meta name="description"
         content="Explore our research areas in computational neuroscience, cognitive modeling, and neural networks.">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -27,12 +28,12 @@
         <!-- Main Content -->
         <main class="main">
             <div class="container">
-                <div class="page-header">
-                    <h1 class="page-title">Understanding Intelligence Through Computation</h1>
+                <div class="back-link-container">
                     <a href="index.html" class="back-link">Back to Home</a>
                 </div>
 
                 <section class="section">
+                    <h1 class="page-title">Understanding Intelligence Through Computation</h1>
                     <p class="hero-description">
                         Research in the Mante lab aims to uncover how complex cognitive abilities, such as reasoning,
                         problem-solving, and decision-making, emerge from the coordinated activity of neural populations
@@ -48,41 +49,193 @@
                     </p>
                 </section>
 
+                <section class="section section-compact">
+                    <div class="research-areas-grid">
+                        <a href="research-high-dimensional.html" class="research-area-box">
+                            <h3 class="research-area-title">Inferring structure in high-dimensional data</h3>
+                        </a>
+                        <a href="research-behavioral.html" class="research-area-box">
+                            <h3 class="research-area-title">Behavioral mechanisms of cognition</h3>
+                        </a>
+                        <a href="research-neural.html" class="research-area-box">
+                            <h3 class="research-area-title">Neural mechanisms of cognition</h3>
+                        </a>
+                        <a href="research-natural-behavior.html" class="research-area-box">
+                            <h3 class="research-area-title">Structure and dynamics of natural behavior</h3>
+                        </a>
+                    </div>
+                </section>
+
                 <section class="section">
                     <h2 class="section-title">Publications</h2>
-                    <ul class="publication-list">
-                        <li class="publication-item">
-                            <span class="publication-authors">Smith J, Johnson A, Williams B.</span>
-                            <span class="publication-title">Neural population dynamics during cognitive flexibility
-                                tasks.</span>
-                            <span class="publication-venue">Nature Neuroscience, 2024.</span>
-                        </li>
-                        <li class="publication-item">
-                            <span class="publication-authors">Johnson A, Chen L, Smith J.</span>
-                            <span class="publication-title">A unified framework for understanding prefrontal cortex
-                                computations.</span>
-                            <span class="publication-venue">Neuron, 2024.</span>
-                        </li>
-                        <li class="publication-item">
-                            <span class="publication-authors">Williams B, Kumar R, Johnson A.</span>
-                            <span class="publication-title">Machine learning approaches for decoding cognitive states
-                                from neural data.</span>
-                            <span class="publication-venue">PNAS, 2023.</span>
-                        </li>
-                        <li class="publication-item">
-                            <span class="publication-authors">Chen L, Smith J.</span>
-                            <span class="publication-title">Recurrent neural network models of working memory
-                                maintenance.</span>
-                            <span class="publication-venue">Journal of Neuroscience, 2023.</span>
-                        </li>
-                        <li class="publication-item">
-                            <span class="publication-authors">Kumar R, Williams B, Chen L.</span>
-                            <span class="publication-title">Dimensionality reduction reveals latent cognitive variables
-                                in neural populations.</span>
-                            <span class="publication-venue">eLife, 2022.</span>
-                        </li>
-                    </ul>
+                    <div id="publications-container">
+                        <p class="loading-text">Loading publications...</p>
+                    </div>
                 </section>
+
+                <script>
+                    // BibTeX Parser
+                    function parseBibTeX(bibtex) {
+                        const entries = [];
+                        // Match BibTeX entries: @type{key, ... }
+                        const entryRegex = /@(\w+)\s*\{\s*([^,]+)\s*,([^@]*?)(?=\n@|\n*$)/gs;
+                        let match;
+
+                        while ((match = entryRegex.exec(bibtex)) !== null) {
+                            const type = match[1].toLowerCase();
+                            const key = match[2].trim();
+                            const content = match[3];
+
+                            const entry = { type, key };
+
+                            // Parse fields
+                            const fieldRegex = /(\w+)\s*=\s*\{([^}]*)\}/g;
+                            let fieldMatch;
+
+                            while ((fieldMatch = fieldRegex.exec(content)) !== null) {
+                                const fieldName = fieldMatch[1].toLowerCase();
+                                let fieldValue = fieldMatch[2].trim();
+
+                                // Clean up LaTeX special characters
+                                fieldValue = fieldValue
+                                    .replace(/\\["'`^~=.uvHtcdb]\{(\w)\}/g, '$1')  // Accented chars
+                                    .replace(/\{\\["'`^~=.uvHtcdb](\w)\}/g, '$1')  // Alt format
+                                    .replace(/\{\\'(\w)\}/g, '$1')
+                                    .replace(/\\['`^~"]=?(\w)/g, '$1')
+                                    .replace(/\{/g, '')
+                                    .replace(/\}/g, '')
+                                    .replace(/\s+/g, ' ');
+
+                                entry[fieldName] = fieldValue;
+                            }
+
+                            if (entry.author && entry.title && entry.year) {
+                                entries.push(entry);
+                            }
+                        }
+
+                        return entries;
+                    }
+
+                    // Format authors (shorten if too many)
+                    function formatAuthors(authors) {
+                        // Split by ' and '
+                        const authorList = authors.split(/\s+and\s+/);
+                        return authorList.map(a => {
+                            // Handle "Last, First" format
+                            if (a.includes(',')) {
+                                const parts = a.split(',').map(p => p.trim());
+                                const lastName = parts[0];
+                                const firstNames = parts[1] || '';
+                                // Get initials
+                                const initials = firstNames.split(/\s+/)
+                                    .map(n => n.charAt(0) + '.')
+                                    .join(' ');
+                                return `${lastName} ${initials}`.trim();
+                            }
+                            return a.trim();
+                        }).join(', ');
+                    }
+
+                    // Format venue
+                    function formatVenue(entry) {
+                        let venue = '';
+
+                        if (entry.journal) {
+                            venue = entry.journal;
+                        } else if (entry.booktitle) {
+                            venue = entry.booktitle;
+                        } else if (entry.howpublished) {
+                            venue = entry.howpublished;
+                        }
+
+                        if (entry.volume) {
+                            venue += `, ${entry.volume}`;
+                            if (entry.number) {
+                                venue += `(${entry.number})`;
+                            }
+                        }
+
+                        if (entry.pages) {
+                            venue += `, ${entry.pages}`;
+                        }
+
+                        venue += `, ${entry.year}`;
+
+                        return venue;
+                    }
+
+                    // Group entries by year
+                    function groupByYear(entries) {
+                        const groups = {};
+                        entries.forEach(entry => {
+                            const year = entry.year;
+                            if (!groups[year]) {
+                                groups[year] = [];
+                            }
+                            groups[year].push(entry);
+                        });
+                        return groups;
+                    }
+
+                    // Render publications
+                    function renderPublications(entries) {
+                        const container = document.getElementById('publications-container');
+
+                        if (entries.length === 0) {
+                            container.innerHTML = '<p>No publications found.</p>';
+                            return;
+                        }
+
+                        // Sort entries by year (descending)
+                        entries.sort((a, b) => parseInt(b.year) - parseInt(a.year));
+
+                        // Group by year
+                        const grouped = groupByYear(entries);
+                        const years = Object.keys(grouped).sort((a, b) => parseInt(b) - parseInt(a));
+
+                        let html = '';
+
+                        years.forEach(year => {
+                            html += `<h3 class="publication-year">${year}</h3>`;
+                            html += '<ul class="publication-list">';
+
+                            grouped[year].forEach(entry => {
+                                html += `
+                                    <li class="publication-item">
+                                        <span class="publication-authors">${formatAuthors(entry.author)}</span>
+                                        <span class="publication-title">${entry.title}</span>
+                                        <span class="publication-venue">${formatVenue(entry)}</span>
+                                    </li>
+                                `;
+                            });
+
+                            html += '</ul>';
+                        });
+
+                        container.innerHTML = html;
+                    }
+
+                    // Load and parse BibTeX file
+                    async function loadPublications() {
+                        try {
+                            const response = await fetch('publications.bib');
+                            if (!response.ok) {
+                                throw new Error('Failed to fetch publications.bib');
+                            }
+                            const bibtex = await response.text();
+                            const entries = parseBibTeX(bibtex);
+                            renderPublications(entries);
+                        } catch (error) {
+                            console.error('Error loading publications:', error);
+                            document.getElementById('publications-container').innerHTML =
+                                '<p class="error-text">Failed to load publications. Please try again later.</p>';
+                        }
+                    }
+
+                    // Load publications when DOM is ready
+                    document.addEventListener('DOMContentLoaded', loadPublications);
+                </script>
             </div>
         </main>
 
@@ -90,8 +243,11 @@
         <footer class="footer">
             <div class="container">
                 <div class="footer-content">
-                    <span>© 2025 Mante Lab</span>
-                    <span>Advancing the Science of Mind</span>
+                    <span>© 2026 Mante Lab</span>
+                    <div class="footer-logos">
+                        <img src="eth_logo.svg" alt="ETH Zürich" class="footer-logo footer-logo-eth">
+                        <img src="uzh_logo.svg" alt="University of Zürich" class="footer-logo">
+                    </div>
                 </div>
             </div>
         </footer>
